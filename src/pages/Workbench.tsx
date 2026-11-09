@@ -1,4 +1,5 @@
-import {useState} from 'react';
+import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Footprints, ScanLine, HeartPulse, Thermometer, Filter, ArrowUpDown, Plus } from 'lucide-react';
 import { useStore } from '../lib/store';
@@ -15,103 +16,87 @@ export default function Workbench() {
     .sort((a, b) => sortByRisk ? b.confidence - a.confidence : b.at.localeCompare(a.at));
 
   return (
-    <div className="page">
-      <div className="flow-grid workbench-grid">
-        {/* 左：圆环 + 概览 */}
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 24 }}>
-          <ProgressRing value={85} size={160} color="var(--color-success)" />
-          <div style={{ marginTop: 16, textAlign: 'center' }}>
-            <div className="page-title" style={{ fontSize: 17, marginBottom: 4 }}>
-              我的巡检工作台
-            </div>
-            <div className="small muted">今日路径：已完成 85%</div>
-            <div className="small muted">巡检时长 06:24:12</div>
+    <div className="page workbench-page">
+      <header className="workbench-toolbar">
+        <div>
+          <h1 className="page-title">我的巡检工作台</h1>
+          <div className="page-sub">
+            B 区北侧走廊 · <span className="tabular">{pending.length}</span> 个异常点位待核查
           </div>
         </div>
+        <div className="workbench-controls" aria-label="待办筛选与排序" role="group">
+          <Button variant="ghost" aria-pressed={highOnly} onClick={() => setHighOnly(!highOnly)}>
+            <Filter size={14} /> {highOnly ? '全部风险' : '仅极高危'}
+          </Button>
+          <Button variant="ghost" aria-pressed={sortByRisk} onClick={() => setSortByRisk(!sortByRisk)}>
+            <ArrowUpDown size={14} /> {sortByRisk ? '按置信度' : '按时间'}
+          </Button>
+        </div>
+      </header>
 
-        {/* 右：待办任务 */}
-        <div>
-          <div className="flex-between workbench-toolbar" style={{ marginBottom: 12 }}>
-            <div>
-              <div style={{ fontSize: 15, fontWeight: 600 }}>我的待办任务</div>
-              <div className="small muted">
-                当前位于 B区-北侧走廊。检测到 <span className="tabular" style={{ color: 'var(--color-danger)' }}>{pending.length}</span>{' '}
-                个待办异常点位，请及时前往核实并标记解决。系统已同步最新防误触算法。
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <Button size="sm" variant="ghost" aria-pressed={highOnly} onClick={() => setHighOnly(!highOnly)}>
-                <Filter size={14} /> {highOnly ? "全部风险" : "仅极高危"}
-              </Button>
-              <Button size="sm" variant="ghost" aria-pressed={sortByRisk} onClick={() => setSortByRisk(!sortByRisk)}>
-                <ArrowUpDown size={14} /> {sortByRisk ? "按置信度" : "按时间"}
-              </Button>
-            </div>
-          </div>
-
-          {pending.length === 0 ? (
-            <Empty text="今日无待办，去 AR 扫描发现新异常" />
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: 12 }}>
-              {pending.map((e) => (
-                <div key={e.id} className="card" style={{ display: 'flex', gap: 12 }}>
-                  <Thumb kind={e.screenshot} size="md" />
-                  <div className="workbench-event-body">
-                    <div className="flex-between" style={{ marginBottom: 6 }}>
-                      <Badge level={e.level} />
-                      <span className="small tertiary mono">{e.at.slice(11, 16)}</span>
-                    </div>
-                    <div style={{ fontWeight: 600, fontSize: 14 }}>{e.title}</div>
-                    <div className="small muted mt-2">
-                      {e.id} · {e.zone}（{e.scene}）
-                    </div>
-                    <div className="small muted mt-2">
-                      置信度 <span className="tabular">{formatConfidence(e.confidence)}</span>
-                      {isLowConfidence(e.confidence) && (
-                        <span style={{ color: 'var(--color-warning)', marginLeft: 6 }}>低置信 · 建议人工复核</span>
-                      )}
-                    </div>
-                    <div className="workbench-event-action">
-                      <Button size="sm" variant="primary" block onClick={() => navigate(`/evidence?event=${encodeURIComponent(e.id)}`)}>
-                        核查
-                      </Button>
-                    </div>
+      <div className="workbench-grid">
+        <section className="workbench-board" aria-label="我的待办任务">
+          {pending.length === 0 && <Empty text="今日无待办，去 AR 扫描发现新异常" />}
+          <div className="workbench-events">
+            {pending.map(event => (
+              <article key={event.id} className="card workbench-event">
+                <div className="workbench-event-preview" aria-hidden="true">
+                  <Thumb kind={event.screenshot} size="lg" />
+                </div>
+                <div className="workbench-event-body">
+                  <div className="workbench-event-status">
+                    <Badge level={event.level} />
+                    <time className="small muted mono" dateTime={event.at}>{event.at.slice(11, 16)}</time>
+                  </div>
+                  <h2 className="workbench-event-title">{event.title}</h2>
+                  <div className="workbench-event-meta small muted">
+                    <span className="mono">{event.id}</span>
+                    <span>{event.zone} · {event.scene}</span>
+                  </div>
+                  <div className="workbench-event-confidence small muted">
+                    <span>置信度 <strong className="tabular">{formatConfidence(event.confidence)}</strong></span>
+                    {isLowConfidence(event.confidence) && <span className="workbench-low-confidence">低置信 · 建议人工复核</span>}
                   </div>
                 </div>
-              ))}
-              <button
-                className="card"
-                onClick={() => navigate('/ar')}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, color: 'var(--color-foreground-muted)', minHeight: 110, borderStyle: 'dashed', background: 'transparent' }}
-              >
-                <Plus size={18} /> 扫描新点位以添加任务
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
+                <div className="workbench-event-action">
+                  <Button variant="primary" block onClick={() => navigate(`/evidence?event=${encodeURIComponent(event.id)}`)}>
+                    核查
+                  </Button>
+                </div>
+              </article>
+            ))}
+            <button className="card workbench-add" onClick={() => navigate('/ar')}>
+              <Plus size={20} aria-hidden="true" /> 扫描新点位以添加任务
+            </button>
+          </div>
+        </section>
 
-      {/* 底部统计 */}
-      <div className="workbench-stats">
-        <Stat icon={<Footprints size={17} />} label="步数统计" value="12,403" />
-        <Stat icon={<ScanLine size={17} />} label="已扫描点" value="42/50" />
-        <Stat icon={<HeartPulse size={17} />} label="设备健康度" value="98%" />
-        <Stat icon={<Thermometer size={17} />} label="当前气温" value="24.5°C" />
+        <aside className="workbench-summary" aria-label="今日巡检概览">
+          <section className="card workbench-progress">
+            <h2>今日巡检进度</h2>
+            <ProgressRing value={85} size={132} color="var(--color-success)" />
+            <div className="small muted">巡检时长 <span className="tabular">06:24:12</span></div>
+          </section>
+          <section className="card workbench-metrics">
+            <h2>巡检指标</h2>
+            <dl className="workbench-stats">
+              <Stat icon={<Footprints size={16} />} label="步数统计" value="12,403" />
+              <Stat icon={<ScanLine size={16} />} label="已扫描点" value="42/50" />
+              <Stat icon={<HeartPulse size={16} />} label="设备健康度" value="98%" />
+              <Stat icon={<Thermometer size={16} />} label="当前气温" value="24.5°C" />
+            </dl>
+          </section>
+        </aside>
       </div>
     </div>
   );
 }
 
-function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function Stat({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return (
-    <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-      <div style={{ color: 'var(--color-primary)' }}>{icon}</div>
-      <div>
-        <div className="small muted">{label}</div>
-        <div className="tabular" style={{ fontSize: 18, fontWeight: 700 }}>
-          {value}
-        </div>
-      </div>
+    <div className="workbench-stat">
+      <dt className="small muted"><span aria-hidden="true">{icon}</span>{label}</dt>
+      <dd className="tabular">{value}</dd>
     </div>
   );
 }
