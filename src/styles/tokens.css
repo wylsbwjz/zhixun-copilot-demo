@@ -1,0 +1,70 @@
+:root {
+  /* 背景层级 */
+  --color-canvas: #0b0f16;
+  --color-surface: #12171c;
+  --color-surface-soft: #1d232a;
+  --color-surface-high: #242c36;
+  --color-selected: #1d2d3e;
+
+  /* 品牌与强调 */
+  --color-primary: #4db1ff;
+  --color-primary-strong: #2e8bff;
+  --color-primary-foreground: #0b0f16;
+
+  /* 文本 */
+  --color-foreground: #f5f6f7;
+  --color-foreground-muted: #8396a8;
+  --color-foreground-tertiary: #5b6b7b;
+
+  /* 边框 */
+  --color-border: #2e3742;
+  --color-border-strong: #758ca4;
+
+  /* 语义（前景 / 背景成对） */
+  --color-danger: #fa6161;
+  --color-danger-bg: #490000;
+  --color-warning: #ffdf72;
+  --color-warning-bg: #382700;
+  --color-success: #97dd40;
+  --color-success-bg: #143e20;
+  --color-info: #4db1ff;
+  --color-info-bg: #00144a;
+  --color-neutral: #a9b4be;
+  --color-neutral-bg: #242e38;
+
+  /* 图表 */
+  --chart-1: #4db1ff;
+  --chart-2: #64edd2;
+  --chart-3: #bde986;
+  --chart-4: #ffdf72;
+  --chart-5: #ff8cb2;
+  --chart-6: #d3b6ff;
+  --chart-7: #b995e0;
+  --chart-8: #a6e0ff;
+
+  /* 圆角 / 间距 */
+  --radius-inline: 4px;
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-panel: 16px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* 布局 */
+  --topbar-h: 56px;
+  --contextbar-h: 44px;
+  --statusbar-h: 40px;
+  --nav-w: 220px;
+  --nav-w-collapsed: 64px;
+
+  --font-sans: 'Inter', 'Source Sans 3', 'PingFang SC', 'Microsoft YaHei',
+    -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+}
