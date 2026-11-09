@@ -16,10 +16,10 @@ export function EChart({
     if (!ref.current) return;
     const chart = echarts.init(ref.current);
     chartRef.current = chart;
-    const onResize = () => chart.resize();
-    window.addEventListener('resize', onResize);
+    const resize = new ResizeObserver(() => chart.resize());
+    resize.observe(ref.current);
     return () => {
-      window.removeEventListener('resize', onResize);
+      resize.disconnect();
       chart.dispose();
       chartRef.current = null;
     };
@@ -45,7 +45,7 @@ export function trendOption(labels: string[], values: number[]): EChartsOption {
   return {
     backgroundColor: 'transparent',
     grid: { left: 42, right: 16, top: 24, bottom: 28 },
-    tooltip: { trigger: 'axis', backgroundColor: '#242c36', borderColor: '#2e3742', textStyle: { color: '#f5f6f7' } },
+    tooltip: { trigger: 'axis', confine: true, backgroundColor: '#242c36', borderColor: '#2e3742', textStyle: { color: '#f5f6f7' } },
     xAxis: { type: 'category', data: labels, ...AXIS, boundaryGap: false },
     yAxis: { type: 'value', ...AXIS },
     series: [
@@ -72,11 +72,10 @@ export function donutOption(data: { name: string; value: number }[], centerText:
   const colors = ['#4db1ff', '#ffdf72', '#a9b4be', '#5b6b7b'];
   return {
     backgroundColor: 'transparent',
-    tooltip: { trigger: 'item', backgroundColor: '#242c36', borderColor: '#2e3742', textStyle: { color: '#f5f6f7' } },
+    tooltip: { trigger: 'item', confine: true, backgroundColor: '#242c36', borderColor: '#2e3742', textStyle: { color: '#f5f6f7' } },
     legend: {
-      orient: 'vertical',
-      right: 8,
-      top: 'center',
+      left: 'center',
+      bottom: 0,
       textStyle: { color: '#8396a8', fontSize: 12 },
       itemWidth: 10,
       itemHeight: 10,
@@ -84,8 +83,8 @@ export function donutOption(data: { name: string; value: number }[], centerText:
     series: [
       {
         type: 'pie',
-        radius: ['52%', '74%'],
-        center: ['38%', '50%'],
+        radius: ['42%', '64%'],
+        center: ['50%', '43%'],
         avoidLabelOverlap: true,
         itemStyle: { borderColor: '#0b0f16', borderWidth: 2 },
         label: { show: false },
@@ -94,30 +93,38 @@ export function donutOption(data: { name: string; value: number }[], centerText:
       },
     ],
     title: {
-      text: centerText,
-      subtext: '总计',
-      left: '28%',
-      top: '42%',
-      textAlign: 'center',
-      textStyle: { color: '#f5f6f7', fontSize: 22, fontWeight: 700 },
-      subtextStyle: { color: '#8396a8', fontSize: 11 },
+      text: `{total|${centerText}}\n{caption|总计}`,
+      left: 'center',
+      top: '43%',
+      padding: 0,
+      textVerticalAlign: 'middle',
+      textStyle: {
+        rich: {
+          total: { color: '#f5f6f7', fontSize: 22, fontWeight: 700, lineHeight: 26 },
+          caption: { color: '#8396a8', fontSize: 12, lineHeight: 18 },
+        },
+      },
     },
   };
 }
 
-export function barOption(labels: string[], values: number[], color = '#4db1ff'): EChartsOption {
+export function confidenceOption(values: number[]): EChartsOption {
   return {
     backgroundColor: 'transparent',
-    grid: { left: 42, right: 16, top: 24, bottom: 28 },
-    tooltip: { trigger: 'axis', backgroundColor: '#242c36', borderColor: '#2e3742', textStyle: { color: '#f5f6f7' } },
-    xAxis: { type: 'category', data: labels, ...AXIS },
-    yAxis: { type: 'value', ...AXIS },
+    grid: { left: 44, right: 8, top: 12, bottom: 24 },
+    tooltip: { trigger: 'axis', confine: true, backgroundColor: '#242c36', borderColor: '#2e3742',
+      textStyle: { color: '#f5f6f7' }, valueFormatter: value => `${value}%` },
+    xAxis: { type: 'category', data: values.map((_, index) => String(index + 1)), ...AXIS },
+    yAxis: { type: 'value', min: 0, max: 100, interval: 25, ...AXIS,
+      axisLabel: { ...AXIS.axisLabel, formatter: '{value}%' } },
     series: [
       {
         type: 'bar',
         data: values,
-        barWidth: 22,
-        itemStyle: { color, borderRadius: [4, 4, 0, 0] },
+        name: '置信度',
+        barWidth: '60%',
+        barMaxWidth: 30,
+        itemStyle: { color: '#4db1ff', borderRadius: [4, 4, 0, 0] },
       },
     ],
   };

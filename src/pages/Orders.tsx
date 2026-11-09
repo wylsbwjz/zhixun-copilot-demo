@@ -113,7 +113,7 @@ export default function Orders() {
 
       <div className="flow-grid orders-grid">
         {/* 列表 */}
-        <div className="card" style={{ overflow: 'auto', padding: 0 }}>
+        <div className="card table-scroll" tabIndex={0} role="region" aria-label="整改工单表" style={{ padding: 0 }}>
           {filtered.length === 0 ? (
             <Empty text="当前状态下没有工单" />
           ) : (

@@ -83,9 +83,9 @@ export default function Analytics() {
 
       {/* KPI */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: 12, marginBottom: 16 }}>
-        <Kpi label="平均响应时长" value="12.5" unit="min" />
+        <Kpi label="平均响应时长" value="12.5" unit="分钟" />
         <Kpi label="工单关闭率" value={closeRate} unit="%" delta={`${closedCount}/${orders.length} 张工单已关闭`} />
-        <Kpi label="当前待人工复核" value={pendingCount} unit="units" />
+        <Kpi label="当前待人工复核" value={pendingCount} unit="项" />
         <Kpi label="AI 预判准确率（示例）" value="94.7" unit="%" />
       </div>
 
@@ -96,7 +96,7 @@ export default function Analytics() {
             <span className="title">近{range === '30D' ? '30天' : range === '90D' ? '90天' : '12月'}安全违规趋势</span>
             <span className="right small muted">
               历史样例 <span className="tabular" style={{ color: 'var(--color-foreground)', fontWeight: 700 }}>12,840</span>{' '}
-              <span style={{ color: 'var(--color-success)' }}>-2.4%</span> vs 周期
+              <span style={{ color: 'var(--color-success)' }}>较上一周期下降 2.4%</span>
             </span>
           </div>
           <EChart option={trend} height={260} />
@@ -115,13 +115,14 @@ export default function Analytics() {
           <span className="title">高风险工厂区域排名</span>
           <span className="right small muted">今日已确认违规 <span className="tabular" style={{ color: 'var(--color-primary)', fontWeight: 700 }}>{confirmedCount}</span> 项</span>
         </div>
+        <div className="table-scroll" tabIndex={0} role="region" aria-label="高风险工厂区域排名表">
         <table className="table">
           <thead>
             <tr>
               <th>区域名称</th>
               <th className="num">工单总量</th>
-              <th className="num">平均处理耗时(HR)</th>
-              <th>风险指数(TD)</th>
+              <th className="num">平均耗时</th>
+              <th>风险趋势</th>
               <th>风险系数</th>
             </tr>
           </thead>
@@ -134,7 +135,7 @@ export default function Analytics() {
               <tr key={r.zone}>
                 <td style={{ fontWeight: 500 }}>{r.zone}</td>
                 <td className="num">{r.total.toLocaleString()}</td>
-                <td className="num">{r.hr.toFixed(1)} hr</td>
+                <td className="num">{r.hr.toFixed(1)} 小时</td>
                 <td style={{ width: 120 }}>
                   <EChart option={sparklineOption(r.spark, r.level === 'critical' ? '#fa6161' : r.level === 'moderate' ? '#ffdf72' : '#4db1ff')} height={32} />
                 </td>
@@ -148,6 +149,7 @@ export default function Analytics() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* AI 安全助手浮层 */}

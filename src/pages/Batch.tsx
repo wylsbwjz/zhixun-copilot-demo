@@ -61,7 +61,7 @@ export default function Batch() {
         </select>
       </div>
 
-      <div className="card" style={{ flex: 1, overflow: 'auto', padding: 0, marginBottom: 12 }}>
+      <div className="card table-scroll" tabIndex={0} role="region" aria-label="待复核事件表" style={{ flex: 1, padding: 0, marginBottom: 12 }}>
         {list.length === 0 ? (
           <Empty text="没有待复核事件" />
         ) : (

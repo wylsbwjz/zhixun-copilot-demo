@@ -1,28 +1,28 @@
 import {Link,useSearchParams} from 'react-router-dom';
 import {DEFAULT_SCAN_EVENT,workflowPath} from '../lib/workflow';
 import { useMemo } from 'react';
-import { GitBranch, Activity } from 'lucide-react';
+import { Activity, BarChart3, ChartNoAxesCombined, GitBranch, Layers, Scan, Sparkles } from 'lucide-react';
 import { useStore } from '../lib/store';
-import { EChart, barOption } from '../components/charts';
-import { Button, Badge } from '../components/ui';
+import { EChart, confidenceOption } from '../components/charts';
+import { Badge } from '../components/ui';
 
 export default function Whitebox() {
   const [params] = useSearchParams();
   const eventId = params.get('event') ?? DEFAULT_SCAN_EVENT;
   const event = useStore(s => s.events.find(event => event.id === eventId));
   const timeline = useMemo(
-    () => barOption(['T-5', 'T-4', 'T-3', 'T-2', 'T-1', 'T0'], [0.42, 0.55, 0.61, 0.78, 0.88, 0.927], '#4db1ff'),
+    () => confidenceOption([42, 55, 61, 78, 88, 92.7]),
     [],
   );
 
   return (
-    <div className="page">
+    <div className="page whitebox-page">
       <div className="flex-between" style={{ marginBottom: 16 }}>
         <div>
           <div className="page-title">AI 算法逻辑分析与白盒模型</div>
-          <div className="page-sub">把黑盒告警拆解为可复核的推理节点</div>
+          <div className="page-sub">以锅炉散热器为例，拆解可复核的模型推理节点</div>
         </div>
-        <span className="mono small tertiary">状态: CONVEXITY 47%</span>
+        <span className="badge muted">模型演示 · 示例数据</span>
       </div>
 
       <div className="flow-grid model-grid">
@@ -30,21 +30,21 @@ export default function Whitebox() {
         <div className="card">
           <div className="card-head">
             <Activity size={15} color="var(--color-primary)" />
-            <span className="title">元数据日志</span>
+            <span className="title">分析记录</span>
           </div>
-          <div className="small" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <MetaRow k="时间戳" v="2024-05-21 14:02 CST" />
-            <MetaRow k="节点位置" v="WH-A / LEVEL-9 / Z-04" />
-            <MetaRow k="关联操作员" v="Shift_B_Lead" />
-            <MetaRow k="历史统计" v="3 Events (Last 24h)" />
-          </div>
+          <dl className="model-metadata">
+            <MetaRow k="记录时间（北京时间）" v="2024-05-21 14:02" />
+            <MetaRow k="节点位置" v="A 区仓库 · 9 层 · 04 点位" />
+            <MetaRow k="关联操作员" v="B 班组长" />
+            <MetaRow k="近 24 小时记录" v="3 起事件" />
+          </dl>
         </div>
 
         {/* 决策树 */}
         <div className="card">
           <div className="card-head">
             <GitBranch size={15} color="var(--color-primary)" />
-            <span className="title">DECISION TREE LOGIC</span>
+            <span className="title">决策树推理</span>
           </div>
           <Tree />
         </div>
@@ -52,44 +52,47 @@ export default function Whitebox() {
         {/* 置信度时间线 */}
         <div className="card">
           <div className="card-head">
-            <span className="title">CONFIDENCE SCORE TIMELINE</span>
+            <BarChart3 size={15} color="var(--color-primary)" />
+            <span className="title">置信度变化</span>
           </div>
-          <EChart option={timeline} height={180} />
-          <div className="small muted mt-2">模型置信度随证据累积持续上升</div>
+          <EChart option={timeline} height={168} />
+          <p className="small muted">第 1–6 步的置信度从 42% 升至 92.7%。</p>
         </div>
       </div>
 
       <div className="flow-grid model-evidence-grid mt-4">
         <div className="card">
           <div className="card-head">
-            <span className="title">VISUAL EVIDENCE: NEURAL HEATMAP</span>
+            <Scan size={15} color="var(--color-primary)" />
+            <span className="title">异常证据热力图</span>
           </div>
-          <Heatmap label="MODEL 0.84" highlight />
+          <Heatmap label="异常样本得分 0.84" highlight />
         </div>
         <div className="card">
           <div className="card-head">
-            <span className="title">BASELINE STANDARD</span>
+            <Layers size={15} color="var(--color-primary)" />
+            <span className="title">标准基线热力图</span>
           </div>
-          <Heatmap label="NORMAL - 0.12" />
+          <Heatmap label="正常样本得分 0.12" />
         </div>
         <div className="card">
           <div className="card-head">
-            <span className="title">PREDICTED IMPACT</span>
+            <ChartNoAxesCombined size={15} color="var(--color-primary)" />
+            <span className="title">影响预测</span>
           </div>
-          <div style={{ fontSize: 22, fontWeight: 700 }} className="tabular">
-            Preventive ROI
+          <div className="model-impact">
+            <div className="small muted">预计预防投入回报</div>
+            <div className="model-impact-value tabular">14.2 倍</div>
+            <div className="small muted">预计剩余使用寿命不足 54 小时</div>
           </div>
-          <div style={{ fontSize: 30, fontWeight: 800, color: 'var(--color-success)' }} className="tabular">
-            14.2x
-          </div>
-          <div className="small muted mt-2">剩余寿命 &lt; 54 小时</div>
         </div>
       </div>
 
       {/* 结论与操作 */}
       <div className="card mt-4">
         <div className="card-head">
-          <span className="title">AI LOGIC REASONING</span>
+          <Sparkles size={15} color="var(--color-primary)" />
+          <span className="title">AI 判定依据</span>
         </div>
         <p className="small muted" style={{ lineHeight: 1.7 }}>
           多传感器融合显示 04 号锅炉散热器出现高频共振，热方差超过基线阈值，与「部件疲劳」模式高度匹配。建议立即停炉并执行同频共振物理检测。
@@ -115,51 +118,30 @@ export default function Whitebox() {
 function MetaRow({ k, v }: { k: string; v: string }) {
   return (
     <div>
-      <div className="tertiary small">{k}</div>
-      <div className="mono" style={{ fontSize: 12.5 }}>{v}</div>
+      <dt className="small muted">{k}</dt>
+      <dd className="tabular">{v}</dd>
     </div>
   );
 }
 
 function Tree() {
   const nodes = [
-    { name: 'RADIATOR', val: '0.927', left: '16%', top: '12%' },
-    { name: 'THERMAL VARIANCE', val: '0.812', left: '42%', top: '12%' },
-    { name: 'PATTERN MATCH', val: '0.441', left: '68%', top: '12%' },
-    { name: 'COMPONENT_FATIGUE', val: 'HIT', left: '42%', top: '58%', result: true },
+    { name: '散热器信号', value: '0.927' },
+    { name: '温度方差', value: '0.812' },
+    { name: '模式匹配', value: '0.441' },
   ];
   return (
-    <div style={{ position: 'relative', height: 220 }}>
-      {/* connectors */}
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} viewBox="0 0 100 100" preserveAspectRatio="none">
-        <path d="M28,22 L50,22" stroke="var(--color-border-strong)" strokeWidth="0.6" />
-        <path d="M58,22 L80,22" stroke="var(--color-border-strong)" strokeWidth="0.6" />
-        <path d="M50,30 L50,66" stroke="var(--color-primary)" strokeWidth="0.8" strokeDasharray="2 2" />
-      </svg>
-      {nodes.map((n) => (
-        <div
-          key={n.name}
-          style={{
-            position: 'absolute',
-            left: n.left,
-            top: n.top,
-            transform: 'translateX(-50%)',
-            background: n.result ? 'var(--color-danger-bg)' : 'var(--color-surface-high)',
-            border: `1px solid ${n.result ? 'var(--color-danger)' : 'var(--color-border)'}`,
-            borderRadius: 8,
-            padding: '8px 10px',
-            textAlign: 'center',
-            minWidth: 110,
-          }}
-        >
-          <div className="mono small" style={{ color: n.result ? 'var(--color-danger)' : 'var(--color-foreground-muted)' }}>
-            {n.name}
-          </div>
-          <div className="tabular" style={{ fontSize: 15, fontWeight: 700, color: n.result ? 'var(--color-danger)' : 'var(--color-foreground)' }}>
-            {n.val}
-          </div>
+    <div className="model-tree">
+      {nodes.map(({ name, value }) => (
+        <div className="model-node" key={name}>
+          <div className="small muted">{name}</div>
+          <strong className="tabular">{value}</strong>
         </div>
       ))}
+      <div className="model-node model-node-result">
+        <div className="small">判定结果</div>
+        <strong>命中部件疲劳</strong>
+      </div>
     </div>
   );
 }
@@ -168,13 +150,12 @@ function Heatmap({ label, highlight }: { label: string; highlight?: boolean }) {
   const cells = Array.from({ length: 12 * 8 });
   return (
     <div>
-      <div className="small tertiary mono" style={{ marginBottom: 8 }}>
+      <div className="small muted" style={{ marginBottom: 8 }}>
         {label}
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 3, height: 140 }}>
+      <div className="model-heatmap" aria-hidden="true">
         {cells.map((_, i) => {
           const r = (i * 37) % 100;
-          const hot = highlight ? r : 20;
           return (
             <div
               key={i}

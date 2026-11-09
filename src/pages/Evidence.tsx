@@ -80,26 +80,26 @@ export default function Evidence() {
           </div>
           <Node
             step="01"
-            name="初始检测 · SENSE"
+            name="初始检测"
             color="var(--color-info)"
             text={`区域 ${selected.zone} 监控点检测到异常信号（${selected.title}）。`}
-            meta={[`CONFIDENCE ${selected.confidence.toFixed(4)}`, 'LATENCY 12ms']}
+            meta={[`置信度 ${formatConfidence(selected.confidence)}`, '分析耗时 12 毫秒']}
           />
           <Connector />
           <Node
             step="02"
-            name="特征提取 · EXTRACT"
+            name="特征提取"
             color="var(--color-warning)"
             text="多层卷积网络扫描现场特征，与标准作业规范比对，检测到关键特征缺失或越界。"
-            meta={['FEATURE_SET {SAFETY, COMPLIANCE}', 'MATCH_RESULT NEGATIVE']}
+            meta={['比对范围 · 安全与合规', '比对结果 · 未通过']}
           />
           <Connector />
           <Node
             step="03"
-            name="违规裁定 · JUDGE"
+            name="风险判定"
             color="var(--color-danger)"
             text={`触发规章 {ISO-45001-S3}，判定为${meta.label}风险，建议人工复核并生成整改工单。`}
-            meta={['建议处置: 隔离区域 / 临时锁定门禁', '执行状态: 等待安监主管授权', `SEVERITY ${selected.level.toUpperCase()}`]}
+            meta={['建议处置 · 隔离区域或临时锁定门禁', '执行状态 · 等待安监主管授权', `风险等级 · ${meta.label}`]}
           />
           {selected.confidence < 0.6 && (
             <div className="badge" style={{ color: 'var(--color-warning)', background: 'var(--color-warning-bg)', marginTop: 8, alignSelf: 'flex-start' }}>
@@ -240,7 +240,7 @@ function Node({ step, name, color, text, meta }: { step: string; name: string; c
       <p className="small muted" style={{ lineHeight: 1.6 }}>
         {text}
       </p>
-      <div className="small mono tertiary" style={{ marginTop: 8, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+      <div className="small muted" style={{ marginTop: 8, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
         {meta.map((m) => (
           <span key={m}>{m}</span>
         ))}

@@ -22,18 +22,18 @@ export default function Awareness() {
       <div className="flex-between" style={{ marginBottom: 16 }}>
         <div>
           <div className="page-title">全域安全态势感知</div>
-          <div className="page-sub mono">SYSTEM NORMAL · OPS_RUNNING_24/7 · 大屏模式</div>
+          <div className="page-sub">系统正常 · 全天候巡检示意</div>
         </div>
         <div style={{ display: 'flex', gap: 20 }}>
           <div style={{ textAlign: 'right' }}>
-            <div className="small muted">FACTORY SAFETY SCORE</div>
+            <div className="small muted">全厂安全评分</div>
             <div style={{ fontSize: 30, fontWeight: 700, color: 'var(--color-success)' }} className="tabular">
               {site.safetyScore}
               <span style={{ fontSize: 14, color: 'var(--color-foreground-muted)' }}>/100</span>
             </div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div className="small muted">ACTIVE ANOMALIES</div>
+            <div className="small muted">活跃异常</div>
             <div style={{ fontSize: 30, fontWeight: 700, color: 'var(--color-danger)' }} className="tabular">
               {site.activeAnomalies}
             </div>
@@ -46,15 +46,15 @@ export default function Awareness() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div className="card">
             <div className="card-head">
-              <span className="title">REAL-TIME METRICS</span>
+              <span className="title">环境监测指标</span>
             </div>
             <MetricRow icon={<Thermometer size={16} />} label="温度" value="24.5°C" />
             <MetricRow icon={<Droplets size={16} />} label="湿度" value="52%" />
-            <MetricRow icon={<Wind size={16} />} label="空气质量" value="EXCELLENT" ok />
+            <MetricRow icon={<Wind size={16} />} label="空气质量" value="优" ok />
           </div>
           <div className="card">
             <div className="card-head">
-              <span className="title">NODE DISTRIBUTION</span>
+              <span className="title">传感器节点</span>
             </div>
             <div style={{ fontSize: 26, fontWeight: 700 }} className="tabular">
               {site.activeNodes.toLocaleString()}
@@ -67,16 +67,15 @@ export default function Awareness() {
         </div>
 
         {/* 中：场景 */}
-        <SceneView label="AUGMENTED REALITY · SITEGUARD COPILOT V2.0">
-          <div className="ar-box" style={{ left: '56%', top: '20%', width: '22%', height: '34%' }}>
-            <div className="ar-tag critical" style={{ right: -8, top: -8, transform: 'translateY(-100%)' }}>
-              <div className="t-label" style={{ color: 'var(--color-danger)' }}>
-                <AlertTriangle size={13} /> ZONE 4C ANOMALY DETECTED
-              </div>
-              <div className="t-conf">置信度 98.4% · 严重</div>
+        <SceneView label="厂区监测总览">
+          {event && <>
+            <div className="ar-box" style={{ left: '56%', top: '40%', width: '22%', height: '28%' }} />
+            <div className="ar-tag critical overview-alert">
+              <div className="t-label" style={{ color: 'var(--color-danger)' }}><AlertTriangle size={13} /> {event.title}</div>
+              <div className="t-conf">{event.zone} · {(event.confidence * 100).toFixed(1)}%</div>
             </div>
-          </div>
-          <div className="ar-tag ok" style={{ left: '24%', top: '34%' }}>
+          </>}
+          <div className="ar-tag ok" style={{ left: '8%', top: '55%' }}>
             <div className="t-label" style={{ color: 'var(--color-success)' }}>
               压力阀 · 运行正常
             </div>
@@ -92,7 +91,7 @@ export default function Awareness() {
         {/* 右：告警流 */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <div className="card-head">
-            <span className="title">LIVE ALERT STREAM</span>
+            <span className="title">实时告警</span>
             <span className="right">
               <Button size="sm" variant="ghost" onClick={() => navigate('/dispatch')}>
                 查看全部
@@ -182,7 +181,7 @@ export default function Awareness() {
 
 function MetricRow({ icon, label, value, ok }: { icon: React.ReactNode; label: string; value: string; ok?: boolean }) {
   return (
-    <div className="flex-between" style={{ padding: '8px 0' }}>
+    <div className="flex-between overview-metric" style={{ padding: '8px 0' }}>
       <span className="muted" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
         {icon} {label}
       </span>

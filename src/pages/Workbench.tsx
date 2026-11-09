@@ -31,7 +31,7 @@ export default function Workbench() {
 
         {/* 右：待办任务 */}
         <div>
-          <div className="flex-between" style={{ marginBottom: 12 }}>
+          <div className="flex-between workbench-toolbar" style={{ marginBottom: 12 }}>
             <div>
               <div style={{ fontSize: 15, fontWeight: 600 }}>我的待办任务</div>
               <div className="small muted">
@@ -56,7 +56,7 @@ export default function Workbench() {
               {pending.map((e) => (
                 <div key={e.id} className="card" style={{ display: 'flex', gap: 12 }}>
                   <Thumb kind={e.screenshot} size="md" />
-                  <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="workbench-event-body">
                     <div className="flex-between" style={{ marginBottom: 6 }}>
                       <Badge level={e.level} />
                       <span className="small tertiary mono">{e.at.slice(11, 16)}</span>
@@ -71,7 +71,7 @@ export default function Workbench() {
                         <span style={{ color: 'var(--color-warning)', marginLeft: 6 }}>低置信 · 建议人工复核</span>
                       )}
                     </div>
-                    <div className="flex gap-2" style={{ marginTop: 10 }}>
+                    <div className="workbench-event-action">
                       <Button size="sm" variant="primary" block onClick={() => navigate(`/evidence?event=${encodeURIComponent(e.id)}`)}>
                         核查
                       </Button>
@@ -92,7 +92,7 @@ export default function Workbench() {
       </div>
 
       {/* 底部统计 */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginTop: 20 }}>
+      <div className="workbench-stats">
         <Stat icon={<Footprints size={17} />} label="步数统计" value="12,403" />
         <Stat icon={<ScanLine size={17} />} label="已扫描点" value="42/50" />
         <Stat icon={<HeartPulse size={17} />} label="设备健康度" value="98%" />

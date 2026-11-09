@@ -90,7 +90,7 @@ export default function Ipad() {
   const rotate = dx / 28;
 
   return (
-    <div className="page" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+    <div className="page" style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
       <div className="flex-between" style={{ marginBottom: 8 }}>
         <div>
           <div className="page-title" style={{ fontSize: 17 }}>极速复核</div>

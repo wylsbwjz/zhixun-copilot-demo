@@ -65,9 +65,9 @@ export default function Dispatch() {
         </div>
 
         {/* 中 */}
-        <SceneView label="GLOBAL DISPATCH · SITE MONITOR">
+        <SceneView label="厂区调度示意">
           <div className="ar-box warn" style={{ left: '52%', top: '34%', width: '22%', height: '30%' }} />
-          <div className="ar-tag critical" style={{ left: '55%', top: '60%' }}>
+          <div className="ar-tag critical dispatch-scene-alert">
             <div className="t-label" style={{ color: 'var(--color-danger)' }}>
               检测到异常 B-12区 · 温度突增
             </div>
@@ -82,7 +82,7 @@ export default function Dispatch() {
             <div className="card-head">
               <BrainCircuit size={15} color="var(--color-primary)" />
               <span className="title">深度逻辑诊断</span>
-              <span className="sub mono">NOVE_ANALYSIS_09</span>
+              <span className="sub">分析样例 09</span>
             </div>
             <div className="flex-between small" style={{ marginBottom: 6 }}>
               <span className="muted">置信度评分</span>

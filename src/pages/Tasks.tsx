@@ -92,9 +92,9 @@ export default function Tasks() {
             <Empty text="没有符合条件的任务" />
           ) : (
             filtered.map((t) => (
-              <div key={t.id} className="card" style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div className="flex gap-2" style={{ marginBottom: 6, alignItems: 'center' }}>
+              <div key={t.id} className="card task-card">
+                <div className="task-card-summary">
+                  <div className="flex gap-2" style={{ marginBottom: 6, alignItems: 'center', flexWrap: 'wrap' }}>
                     <Badge level={t.status === 'overdue' ? 'critical' : t.status === 'done' ? 'resolved' : t.status === 'doing' ? 'moderate' : 'low'}>
                       {t.status === 'todo' ? '待接受' : t.status === 'doing' ? '进行中' : t.status === 'review' ? '待复核' : t.status === 'done' ? '已完成' : '已逾期'}
                     </Badge>
@@ -110,18 +110,18 @@ export default function Tasks() {
                     <ProgressBar value={t.progress} color={t.status === 'overdue' ? 'var(--color-danger)' : 'var(--color-primary)'} />
                   </div>
                 </div>
-                <div className="small muted" style={{ textAlign: 'right', flex: 'none' }}>
-                  <div className="mono">{t.plannedAt.slice(5, 16).replace('T', ' ')}</div>
+                <div className="task-card-end">
+                  <span className="small muted mono">{t.plannedAt.slice(5, 16).replace('T', ' ')}</span>
+                  {t.status === 'todo' ? (
+                    <Button variant="primary" onClick={() => {acceptTask(t.id);navigate('/ar?task='+encodeURIComponent(t.id));}}>
+                      <Play size={15} /> 接单
+                    </Button>
+                  ) : t.status === 'doing' ? (
+                    <Button onClick={() => navigate('/ar?task='+encodeURIComponent(t.id))}>
+                      <ChevronRight size={15} /> 继续巡检
+                    </Button>
+                  ) : t.status === 'review' ? <Button onClick={() => markDone(t.id)}>确认任务复核完成</Button> : null}
                 </div>
-                {t.status === 'todo' ? (
-                  <Button variant="primary" onClick={() => {acceptTask(t.id);navigate('/ar?task='+encodeURIComponent(t.id));}}>
-                    <Play size={15} /> 接单
-                  </Button>
-                ) : t.status === 'doing' ? (
-                  <Button onClick={() => navigate('/ar?task='+encodeURIComponent(t.id))}>
-                    <ChevronRight size={15} /> 继续巡检
-                  </Button>
-                ) : t.status === 'review' ? <Button onClick={() => markDone(t.id)}>确认任务复核完成</Button> : null}
               </div>
             ))
           )}

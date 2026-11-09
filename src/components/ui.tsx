@@ -102,7 +102,7 @@ export function ProgressRing({
             {pct}%
           </div>
           <div style={{ fontSize: 11, color: 'var(--color-foreground-muted)', textAlign: 'center', marginTop: 4 }}>
-            COMPLETION
+            已完成
           </div>
         </div>
       </div>
